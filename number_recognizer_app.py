@@ -107,6 +107,7 @@ document.getElementById('predictBtn').addEventListener('click', async () => {
 </html>
 """
 
+
 def preprocess_image_from_bytes(img_bytes):
     """
     Convert raw PNG bytes (from user canvas) into a 1x784 numpy array
@@ -133,7 +134,7 @@ def preprocess_image_from_bytes(img_bytes):
     # If bbox is empty (blank canvas), produce blank 28x28
     if img.size[0] == 0 or img.size[1] == 0:
         blank = Image.new('L', (28,28), 0)
-        return (np.array(blank, dtype=np.float32).reshape(1,-1) / 255.0)
+        return np.array(blank, dtype=np.float32).reshape(1,-1) / 255.0
 
     # Resize preserving aspect ratio so the largest dimension becomes 20 pixels
     width, height = img.size
@@ -164,9 +165,11 @@ def preprocess_image_from_bytes(img_bytes):
     flat = arr.reshape(1, -1)
     return flat
 
+
 @app.route("/")
 def index():
     return render_template_string(HTML_PAGE)
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -195,6 +198,7 @@ def predict():
         return jsonify({"prediction": int(pred)})
     except Exception as e:
         return jsonify({"error": "Prediction failed: " + str(e)}), 500
+
 
 if __name__ == "__main__":
     print("Starting app on http://127.0.0.1:5000 — make sure 'svm_mnist_model.pkl' is in this folder.")
