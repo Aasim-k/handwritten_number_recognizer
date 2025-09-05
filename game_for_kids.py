@@ -816,4 +816,4 @@ if __name__ == "__main__":
     print("📝 Make sure to set your GEMINI_API_KEY environment variable")
     print("📁 Ensure 'svm_mnist_model.pkl' is in this folder")
     print("🌐 Game running at http://127.0.0.1:5000")
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
