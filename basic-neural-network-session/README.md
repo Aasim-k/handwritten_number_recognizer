@@ -14,9 +14,6 @@ Build an MNIST-based model with the following constraints:
 - **Requirement Status:** ✅ Successfully Achieved  
 
 ---
-### ⚙️ Optimizer
-The model is trained using the **Adam optimizer**, which adapts learning rates per parameter and provides fast convergence suitable for small networks like this one.
-
 ## 🏗️ Model Architecture
 
 The model is a **CNN-based architecture** optimized for MNIST digits.  
@@ -45,10 +42,50 @@ Here is the detailed layer summary:
 **Trainable params:** 24,394  
 **Non-trainable params:** 0  
 
-### 🔑 Key Design Choices
-- **Convolutions + BatchNorm + ReLU** → Fast convergence and stable training.  
-- **Dropout Layers** → Prevents overfitting even with a small parameter budget.  
-- **Compact Dense Layer (10 units)** → Keeps parameter count low.  
+### 🧩 Model Description
+
+The model is a **lightweight Convolutional Neural Network (CNN)** specifically designed for the MNIST dataset. It balances **compactness (<25k parameters)** with **high accuracy (97%+ in 1 epoch)** through careful use of convolutional blocks, normalization, pooling, dropout, and global average pooling (GAP).
+
+#### 🔹 Architecture Breakdown
+
+1. **Block 1: Feature Extraction (Shallow features)**
+
+   * `Conv2d(1→16, 3×3)` extracts low-level patterns (edges, strokes).
+   * `BatchNorm2d` + `ReLU` → stabilizes training and introduces non-linearity.
+   * An extra `BatchNorm2d` improves convergence stability.
+
+2. **Block 2: Mid-Level Feature Extraction**
+
+   * `Conv2d(16→32, 3×3)` captures more abstract digit structures.
+   * `BatchNorm2d` + `ReLU` ensures stable gradients.
+   * `MaxPool2d(2×2)` reduces spatial size (from 24×24 → 12×12), lowering computation.
+   * `Dropout(0.1)` provides regularization, preventing overfitting.
+
+3. **Block 3: High-Level Feature Extraction**
+
+   * `Conv2d(32→64, 3×3)` detects complex digit parts.
+   * `BatchNorm2d` + `ReLU` ensures robust deeper representations.
+   * Another `BatchNorm2d` enhances stability.
+
+4. **Global Average Pooling (GAP)**
+
+   * Reduces feature map (`64×10×10`) to a **compact 64-dim vector**, ensuring full input coverage (RF = 28).
+   * Eliminates the need for large fully connected layers → drastically reduces parameters.
+
+5. **Classifier Head**
+
+   * `Dropout(0.05)` before final FC layer → improves generalization.
+   * `Linear(64→10)` outputs class logits.
+   * `log_softmax` produces normalized log-probabilities for classification.
+
+---
+
+### ⚙️ Training Setup
+
+* **Optimizer:** Adam (adaptive learning, fast convergence)
+* **Loss Function:** Negative Log Likelihood (`NLLLoss`)
+* **Regularization:** Dropout in both convolutional and classifier stages
+* **Parameter Count:** 24,394 (well under 25k limit)
 
 ---
 
