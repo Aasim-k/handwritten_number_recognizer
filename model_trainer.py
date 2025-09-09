@@ -2,6 +2,7 @@ import joblib
 from sklearn import svm
 import mnist_loader  # assuming your custom loader
 
+
 def svm_baseline():
     training_data, validation_data, test_data = mnist_loader.load_data()
     
